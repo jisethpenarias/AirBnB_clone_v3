@@ -65,7 +65,8 @@ def put_user(user_id=None):
     user_obj = storage.get('User', user_id)
     if user_obj:
         for key, value in dict_json.items():
-            setattr(user_obj, key, value)
+            if key != 'email':
+                setattr(user_obj, key, value)
         storage.save()
         return make_response(jsonify(user_obj.to_dict()), 200)
     else:
