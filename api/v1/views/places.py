@@ -6,15 +6,16 @@ from flask import jsonify, request, make_response, abort
 from models import storage
 from models.place import Place
 from models.city import City
+from models.user import User
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
                  strict_slashes=False)
 def places_all(city_id=None):
     """ Retrieves the list of all Place objects """
-    cities_id = storage.get('City', state_id)
+    cities_id = storage.get('City', city_id)
     list_places = []
-    if states_id:
+    if cities_id:
         for place in cities_id.places:
             list_places.append(place.to_dict())
         return jsonify(list_places)
@@ -48,10 +49,11 @@ def delete_place(place_id=None):
                  strict_slashes=False)
 def post_places(city_id=None):
     """ Creates a place """
-    cities = storage.get('City', city_id)
-    if not cities:
-        abort(404)
     dict_json = request.get_json()
+    cities = storage.get('City', city_id)
+    users = storage.get('User', dict_json['user_id'])
+    if not cities or not users:
+        abort(404)
     if not dict_json:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     if 'name' not in dict_json:
@@ -70,7 +72,7 @@ def put_places(place_id=None):
     dict_json = request.get_json()
     if not dict_json:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
-    places_obj = storage.get('City', place_id)
+    places_obj = storage.get('Place', place_id)
     if places_obj:
         for key, value in dict_json.items():
             setattr(places_obj, key, value)
