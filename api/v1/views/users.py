@@ -29,7 +29,7 @@ def user_id(user_id=None):
 
 @app_views.route('/users/<user_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_user():
+def delete_user(user_id=None):
     """ Deletes a User object """
     user_obj = storage.get('User', user_id)
     if user_obj:
