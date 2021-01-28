@@ -2,7 +2,7 @@
 """ Status api """
 
 from api.v1.views import app_views
-from flask import jsonify
+from flask import jsonify, request
 from models import storage
 
 
@@ -15,12 +15,13 @@ def status_route():
 @app_views.route('/stats', strict_slashes=False, methods=['GET'])
 def stats_route():
     """ Retrieves the number of each objects """
-    number_objects = {
-        'amenities': storage.count('Amenity'),
-        'cities': storage.count('City'),
-        'places': storage.count('Place'),
-        'reviews': storage.count('Review'),
-        'states': storage.count('State'),
-        'users': storage.count('User')
+    if request.method == 'GET':
+        number_objects = {
+            'amenities': storage.count('Amenity'),
+            'cities': storage.count('City'),
+            'places': storage.count('Place'),
+            'reviews': storage.count('Review'),
+            'states': storage.count('State'),
+            'users': storage.count('User')
         }
-    return jsonify(number_objects)
+        return jsonify(number_objects)
