@@ -60,12 +60,13 @@ def post_user():
 def put_user(user_id=None):
     """ Updates a User object """
     dict_json = request.get_json()
+    list_ignore = ['id', 'email', 'created_at', 'updated_at']
     if not dict_json:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     user_obj = storage.get('User', user_id)
     if user_obj:
         for key, value in dict_json.items():
-            if key != 'email':
+            if key not in list_ignore:
                 setattr(user_obj, key, value)
         storage.save()
         return make_response(jsonify(user_obj.to_dict()), 200)
