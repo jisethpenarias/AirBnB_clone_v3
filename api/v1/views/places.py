@@ -75,9 +75,11 @@ def put_places(place_id=None):
     if not dict_json:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     places_obj = storage.get('Place', place_id)
+    list_ignore = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
     if places_obj:
         for key, value in dict_json.items():
-            setattr(places_obj, key, value)
+            if key not in list_ignore:
+                setattr(places_obj, key, value)
         storage.save()
         return make_response(jsonify(places_obj.to_dict()), 200)
     else:
