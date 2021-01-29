@@ -74,7 +74,7 @@ def put_cities(city_id=None):
     list_ignore = ['id', 'created_at', 'updated_at']
     if cities_obj:
         for key, value in dict_json.items():
-            if key not is list_ignore:
+            if key not in list_ignore:
                 setattr(cities_obj, key, value)
         storage.save()
         return make_response(jsonify(cities_obj.to_dict()), 200)
