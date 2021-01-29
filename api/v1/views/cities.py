@@ -8,7 +8,7 @@ from models.city import City
 from models.state import State
 
 
-@app_views.route('states/<state_id>/cities', methods=['GET'],
+@app_views.route('/states/<state_id>/cities', methods=['GET'],
                  strict_slashes=False)
 def cities_all(state_id=None):
     """ Retrieves the list of all City objects """
@@ -22,7 +22,7 @@ def cities_all(state_id=None):
         abort(404)
 
 
-@app_views.route('cities/<city_id>', methods=['GET'],
+@app_views.route('/cities/<city_id>', methods=['GET'],
                  strict_slashes=False)
 def cities(city_id=None):
     """ Retrieves the list of all City objects """
@@ -32,7 +32,7 @@ def cities(city_id=None):
     abort(404)
 
 
-@app_views.route('cities/<city_id>', methods=['DELETE'],
+@app_views.route('/cities/<city_id>', methods=['DELETE'],
                  strict_slashes=False)
 def delete_city(city_id=None):
     """ Deletes a city object """
@@ -44,7 +44,7 @@ def delete_city(city_id=None):
     return abort(404)
 
 
-@app_views.route('states/<state_id>/cities', methods=['POST'],
+@app_views.route('/states/<state_id>/cities', methods=['POST'],
                  strict_slashes=False)
 def post_cities(state_id=None):
     """ Creates a cities """
@@ -57,8 +57,8 @@ def post_cities(state_id=None):
     if 'name' not in dict_json:
         return make_response(jsonify({'error': 'Missing name'}), 400)
     new_city = City(**dict_json)
-    storage.new(new_city)
     new_city.state_id = states.id
+    storage.new(new_city)
     storage.save()
     return make_response(jsonify(new_city.to_dict()), 201)
 
@@ -71,9 +71,11 @@ def put_cities(city_id=None):
     if not dict_json:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     cities_obj = storage.get('City', city_id)
+    list_ignore = ['id', 'created_at', 'updated_at']
     if cities_obj:
         for key, value in dict_json.items():
-            setattr(cities_obj, key, value)
+            if key not is list_ignore:
+                setattr(cities_obj, key, value)
         storage.save()
         return make_response(jsonify(cities_obj.to_dict()), 200)
     else:

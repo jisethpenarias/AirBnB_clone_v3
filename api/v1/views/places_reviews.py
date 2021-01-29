@@ -9,7 +9,7 @@ from models.place import Place
 from models.user import User
 
 
-@app_views.route('places/<place_id>/reviews', methods=['GET'],
+@app_views.route('/places/<place_id>/reviews', methods=['GET'],
                  strict_slashes=False)
 def reviews_all(place_id=None):
     """ Retrieves the list of all Review objects """
@@ -59,8 +59,8 @@ def post_reviews(place_id=None):
     if 'text' not in dict_json:
         return make_response(jsonify({'error': 'Missing text'}), 400)
     new_review = Review(**dict_json)
+    new_review.place_id = place.id
     storage.new(new_review)
-    new_review.place_id = place_id
     storage.save()
     return make_response(jsonify(new_review.to_dict()), 201)
 
