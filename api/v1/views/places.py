@@ -50,21 +50,21 @@ def delete_place(place_id=None):
 def post_places(city_id=None):
     """ Creates a place """
     dict_json = request.get_json()
-    cities = storage.get('City', city_id)
-    users = storage.get('User', dict_json['user_id'])
-    if not cities or not users:
-        abort(404)
     if not dict_json:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     if 'user_id' not in request.get_json():
         return make_response(jsonify({'error': 'Missing user_id'}), 400)
     if 'name' not in dict_json:
         return make_response(jsonify({'error': 'Missing name'}), 400)
-    new_place = Place(**dict_json)
-    new_place.city_id = cities.id
-    storage.new(new_place)
-    storage.save()
-    return make_response(jsonify(new_place.to_dict()), 201)
+    cities = storage.get('City', city_id)
+    users = storage.get('User', dict_json['user_id'])
+    if cities and users:
+        new_place = Place(**dict_json)
+        new_place.city_id = cities.id
+        storage.new(new_place)
+        storage.save()
+        return make_response(jsonify(new_place.to_dict()), 201)
+    return abort(404)
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'],
