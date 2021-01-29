@@ -58,7 +58,7 @@ def post_cities(state_id=None):
         return make_response(jsonify({'error': 'Missing name'}), 400)
     new_city = City(**dict_json)
     storage.new(new_city)
-    new_city.state_id = state_id
+    new_city.state_id = states.id
     storage.save()
     return make_response(jsonify(new_city.to_dict()), 201)
 
